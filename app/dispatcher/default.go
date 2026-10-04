@@ -352,6 +352,9 @@ func (d *DefaultDispatcher) routedDispatch(ctx context.Context, link *transport.
 	if accessMessage := log.AccessMessageFromContext(ctx); accessMessage != nil {
 		if tag := handler.Tag(); tag != "" {
 			accessMessage.Detour = tag
+			if inbound := session.InboundFromContext(ctx); inbound != nil && inbound.Tag != "" {
+				accessMessage.Detour = inbound.Tag + " -> " + tag
+			}
 			if d.policy.ForSystem().OverrideAccessLogDest {
 				accessMessage.To = destination
 			}
